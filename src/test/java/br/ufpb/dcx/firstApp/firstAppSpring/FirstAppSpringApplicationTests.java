@@ -1,10 +1,10 @@
-package br.ufpb.dcx.cursospring.First.Lab;
+package br.ufpb.dcx.firstApp.firstAppSpring;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FirstLabApplicationTests {
+class FirstAppSpringApplicationTests {
 
 	@Test
 	void contextLoads() {
