@@ -16,7 +16,6 @@ public class DisciplinaController {
     @Autowired
     DisciplinaService objDisciplinaService;
 
-
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<Disciplina> insert(@RequestBody Disciplina disciplina){
         return ResponseEntity.ok().body(objDisciplinaService.insertNewDiscplina(disciplina));
@@ -39,21 +38,41 @@ public class DisciplinaController {
         return ResponseEntity.ok().body(disciplina);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, consumes = "application/json")
-    public ResponseEntity<Disciplina> update(@RequestBody Disciplina disciplina){
+
+    @RequestMapping(value = "/{id}/nota", method = RequestMethod.PUT, consumes = "application/json")
+    public ResponseEntity<Disciplina> updateNotaDisciplina(@RequestBody Disciplina disciplina1, @PathVariable Long id){
+        double nota = disciplina1.getNota();
+        Disciplina disciplina;
         try {
-            disciplina = this.objDisciplinaService.update(disciplina);
+
+            disciplina = this.objDisciplinaService.updateNota(nota, id);
         }catch (DisciplinaNotFoundException ex){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(disciplina);
     }
+
+    @RequestMapping(value = "/{id}/nome", method = RequestMethod.PUT, consumes = "application/json")
+    public ResponseEntity<Disciplina> updateNomeDisciplina(@RequestBody Disciplina disciplina1, @PathVariable Long id){
+        Disciplina disciplina;
+        String nome = disciplina1.getNome();
+        try {
+            disciplina = this.objDisciplinaService.updateNome(nome, id);
+        }catch (DisciplinaNotFoundException ex){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(disciplina);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, consumes = "application/json")
     public ResponseEntity<?> delete(@PathVariable int id){
         this.objDisciplinaService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-
-
+    @RequestMapping(value = "/rancking",method = RequestMethod.GET, consumes = "application/json")
+    public ResponseEntity<List<Disciplina>> rancking(){
+        List<Disciplina> disciplinas = objDisciplinaService.getHanking();
+        return ResponseEntity.ok().body(disciplinas);
+    }
 }

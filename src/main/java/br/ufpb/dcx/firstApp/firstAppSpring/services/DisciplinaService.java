@@ -20,12 +20,22 @@ public class DisciplinaService {
         return this.serviceDiscplinaMock.getAll();
     }
 
+    public List<Disciplina> getHanking(){
+        List<Disciplina> listDisciplinaOrd = this.serviceDiscplinaMock.getAll();
+        listDisciplinaOrd.sort((o1, o2) -> o1.getNota() > o2.getNota() ? -1 : 1);
+        return listDisciplinaOrd;
+    }
+
     public Disciplina getOne(int id) throws DisciplinaNotFoundException {
         return this.serviceDiscplinaMock.getOne(id);
     }
 
-    public Disciplina update(Disciplina disciplina) throws DisciplinaNotFoundException {
-        return this.serviceDiscplinaMock.updateDisciplina(disciplina);
+    public Disciplina updateNota(double newNota, Long id) throws DisciplinaNotFoundException {
+        return this.serviceDiscplinaMock.updateNotaDisciplina(newNota, id);
+    }
+
+    public Disciplina updateNome(String newNome, Long id) throws DisciplinaNotFoundException {
+        return this.serviceDiscplinaMock.updateNomeDisciplina(newNome, id);
     }
 
     public void delete(int id){

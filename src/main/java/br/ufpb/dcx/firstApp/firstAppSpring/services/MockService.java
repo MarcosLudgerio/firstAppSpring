@@ -47,4 +47,18 @@ public class MockService {
         this.disciplinas.remove(disciplina1);
     }
 
+    public Disciplina updateNotaDisciplina(double newNota, Long id){
+        Disciplina disciplina1 = null;
+        for(Disciplina d : this.disciplinas) if(d.getId() == id) disciplina1 = d;
+        disciplina1.setNota(newNota);
+       return disciplina1;
+    }
+
+    public Disciplina updateNomeDisciplina(String newNome, Long id){
+        Disciplina disciplina1 = null;
+        for(Disciplina d : this.disciplinas) if(d.getId() == id) disciplina1 = d;
+        disciplina1.setNome(newNome);
+        return disciplina1;
+    }
+
 }

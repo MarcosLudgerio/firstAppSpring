@@ -4,7 +4,7 @@ package br.ufpb.dcx.firstApp.firstAppSpring.model;
 public class Disciplina {
     int id;
     String nome;
-    double nota;
+    Double nota;
 
     public Disciplina() {}
 
