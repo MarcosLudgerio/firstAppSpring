@@ -41,10 +41,11 @@ public class MockService {
         return disciplinaAlterar;
     }
 
-    public void deleteDisciplina(int id){
+    public Disciplina deleteDisciplina(int id){
         Disciplina disciplina1 = null;
         for(Disciplina d : this.disciplinas) if(d.getId() == id) disciplina1 = d;
         this.disciplinas.remove(disciplina1);
+        return disciplina1;
     }
 
     public Disciplina updateNotaDisciplina(double newNota, Long id){

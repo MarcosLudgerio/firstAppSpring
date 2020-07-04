@@ -38,8 +38,8 @@ public class DisciplinaService {
         return this.serviceDiscplinaMock.updateNomeDisciplina(newNome, id);
     }
 
-    public void delete(int id){
-        this.serviceDiscplinaMock.deleteDisciplina(id);
+    public Disciplina delete(int id){
+        return this.serviceDiscplinaMock.deleteDisciplina(id);
     }
 
 }
