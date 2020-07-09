@@ -1,14 +1,23 @@
 package br.ufpb.dcx.firstApp.firstAppSpring.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
+@Entity
 public class Disciplina {
-    int id;
+    @Id
+    @GeneratedValue
+    Long id;
     String nome;
     Double nota;
+    String comentarios;
+    int likes;
+
 
     public Disciplina() {}
 
-    public Disciplina(int id, String nome, double nota) {
+    public Disciplina(Long id, String nome, double nota) {
         this.id = id;
         this.nome = nome;
         this.nota = nota;
@@ -20,14 +29,37 @@ public class Disciplina {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", nota=" + nota +
+                ", comentarios='" + comentarios + '\'' +
+                ", likes=" + likes +
                 '}';
     }
 
-    public int getId() {
+    public void setNota(Double nota) {
+        this.nota = nota;
+    }
+
+    public String getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(String comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

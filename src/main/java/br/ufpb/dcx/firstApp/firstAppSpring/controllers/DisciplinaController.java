@@ -27,7 +27,7 @@ public class DisciplinaController {
     }
 
     @GetMapping(value = "/api/disciplinas/{id}")
-    public ResponseEntity<Disciplina> find(@PathVariable int id){
+    public ResponseEntity<Disciplina> find(@PathVariable Long id){
         try {
             return new ResponseEntity<>(this.objDisciplinaService.getOne(id), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
@@ -55,8 +55,12 @@ public class DisciplinaController {
     }
 
     @DeleteMapping(value = "/api/disciplinas/{id}")
-    public ResponseEntity<Disciplina> delete(@PathVariable int id){
-        return new ResponseEntity<>(this.objDisciplinaService.delete(id), HttpStatus.OK);
+    public ResponseEntity<Disciplina> delete(@PathVariable Long id){
+        try {
+            return new ResponseEntity<>(this.objDisciplinaService.delete(id), HttpStatus.OK);
+        }catch (DisciplinaNotFoundException ex){
+            return new ResponseEntity<>(new Disciplina(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(value = "/rancking",method = RequestMethod.GET, consumes = "application/json")
