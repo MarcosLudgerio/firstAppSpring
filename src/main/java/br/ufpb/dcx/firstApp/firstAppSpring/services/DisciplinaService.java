@@ -1,13 +1,21 @@
 package br.ufpb.dcx.firstApp.firstAppSpring.services;
 
+import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.DisciplinaNotFoundException;
 import br.ufpb.dcx.firstApp.firstAppSpring.model.Disciplina;
 import br.ufpb.dcx.firstApp.firstAppSpring.repositories.DisciplinaRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DisciplinaService {
@@ -15,20 +23,37 @@ public class DisciplinaService {
     @Autowired
     DisciplinaRepository disciplinaRepository;
 
-    public Disciplina insertNewDiscplina(Disciplina disciplina){
-        this.disciplinaRepository.save(disciplina);
+    @PostConstruct
+    public void initDisciplinas(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        TypeReference<List<Disciplina>> typeReference = new TypeReference<List<Disciplina>>() {};
+        InputStream inputStream = ObjectMapper.class.getResourceAsStream("/json/Disciplinas.json");
+        try{
+            List<Disciplina> disciplinas =  objectMapper.readValue(inputStream, typeReference);
+            this.disciplinaRepository.saveAll(disciplinas);
+        }catch (IOException ex){
+            System.out.println(ex.getMessage());
+        }
+    }
+
+
+    public Disciplina insertNewDiscplina(DisciplinaDTO disciplinaDTO){
+        this.disciplinaRepository.save(disciplinaDTO.fromDTO());
         Disciplina disciplina1 = (Disciplina) this.disciplinaRepository.findById(Long.valueOf(this.disciplinaRepository.count())).get();
         return disciplina1;
     }
 
-    public List<Disciplina> getAll(){
-        return this.disciplinaRepository.findAll();
+    public List<DisciplinaDTO> getAll(){
+        List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
+        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj)).collect(Collectors.toList());
+        return disciplinaDTOList;
     }
 
-    public List<Disciplina> getHanking(){
-        List<Disciplina> listDisciplinaOrd = this.getAll();
-        listDisciplinaOrd.sort((o1, o2) -> o1.getNota() > o2.getNota() ? -1 : 1);
-        return listDisciplinaOrd;
+    public List<DisciplinaDTO> getHanking(){
+        List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
+        disciplinaList.sort((o1, o2) -> o1.getNota() > o2.getNota() ? -1 : 1);
+        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj)).collect(Collectors.toList());
+        return disciplinaDTOList;
     }
 
     public Disciplina getOne(Long id) throws DisciplinaNotFoundException {
@@ -53,6 +78,13 @@ public class DisciplinaService {
     public Disciplina delete(Long id) throws DisciplinaNotFoundException{
         Disciplina disciplina = this.getOne(id);
         this.disciplinaRepository.delete(disciplina);
+        return disciplina;
+    }
+
+    public Disciplina receivedLike(Long id) throws DisciplinaNotFoundException{
+        Disciplina disciplina = this.getOne(id);
+        disciplina.setLikes(disciplina.getLikes() + 1);
+        this.disciplinaRepository.save(disciplina);
         return disciplina;
     }
 

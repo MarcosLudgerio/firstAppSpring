@@ -1,5 +1,6 @@
 package br.ufpb.dcx.firstApp.firstAppSpring.controllers;
 
+import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.DisciplinaNotFoundException;
 import br.ufpb.dcx.firstApp.firstAppSpring.model.Disciplina;
 import br.ufpb.dcx.firstApp.firstAppSpring.services.DisciplinaService;
@@ -13,16 +14,17 @@ import java.util.List;
 
 @Controller
 public class DisciplinaController {
+
     @Autowired
     DisciplinaService objDisciplinaService;
 
-    @PostMapping(value = "/api/disciplinas/")
-    public ResponseEntity<Disciplina> insert(@RequestBody Disciplina disciplina){
-        return new ResponseEntity<>(objDisciplinaService.insertNewDiscplina(disciplina), HttpStatus.OK);
+    @PostMapping(value = "/api/disciplinas")
+    public ResponseEntity<Disciplina> insert(@RequestBody DisciplinaDTO disciplinaDTO){
+        return new ResponseEntity<>(objDisciplinaService.insertNewDiscplina(disciplinaDTO), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/api/disciplinas/")
-    public ResponseEntity<List<Disciplina>> findAll(){
+    @GetMapping(value = "/api/disciplinas")
+    public ResponseEntity<List<DisciplinaDTO>> findAll(){
         return new ResponseEntity<>(objDisciplinaService.getAll(), HttpStatus.OK);
     }
 
@@ -45,12 +47,22 @@ public class DisciplinaController {
         }
     }
 
-    @PutMapping(value = "/api/disciplinas/{id}/nome")
+    @PutMapping(value = "/api/disciplinas/{id}/nota")
     public ResponseEntity<Disciplina> updateNotaDisciplina(@RequestBody Double nota, @PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
         try {
             return new ResponseEntity<>(this.objDisciplinaService.updateNota(nota, id), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
             return new ResponseEntity<>(new Disciplina(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping(value = "/api/disciplinas/likes/{id}")
+    public ResponseEntity<DisciplinaDTO> receivedLike(@PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
+        try {
+            Disciplina disciplina = this.objDisciplinaService.receivedLike(id);
+            return new ResponseEntity<>(new DisciplinaDTO(disciplina.getId(), disciplina.getNome(), disciplina.getLikes()), HttpStatus.OK);
+        }catch (DisciplinaNotFoundException ex){
+            return new ResponseEntity<>(new DisciplinaDTO(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -63,8 +75,10 @@ public class DisciplinaController {
         }
     }
 
+
+
     @RequestMapping(value = "/rancking",method = RequestMethod.GET, consumes = "application/json")
-    public ResponseEntity<List<Disciplina>> rancking(){
+    public ResponseEntity<List<DisciplinaDTO>> rancking(){
         return new ResponseEntity<>(this.objDisciplinaService.getHanking(), HttpStatus.OK);
     }
 }

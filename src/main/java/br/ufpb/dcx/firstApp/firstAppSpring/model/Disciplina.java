@@ -17,10 +17,15 @@ public class Disciplina {
 
     public Disciplina() {}
 
-    public Disciplina(Long id, String nome, double nota) {
-        this.id = id;
+    public Disciplina(String nome) {
+        this.nome = nome;
+    }
+
+    public Disciplina(String nome, Double nota, int likes) {
         this.nome = nome;
         this.nota = nota;
+        this.comentarios = comentarios;
+        this.likes = likes;
     }
 
     @Override
