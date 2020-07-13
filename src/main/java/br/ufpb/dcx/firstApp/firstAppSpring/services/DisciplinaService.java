@@ -24,48 +24,57 @@ public class DisciplinaService {
     DisciplinaRepository disciplinaRepository;
 
     @PostConstruct
-    public void initDisciplinas(){
+    public void initDisciplinas() {
         ObjectMapper objectMapper = new ObjectMapper();
-        TypeReference<List<Disciplina>> typeReference = new TypeReference<List<Disciplina>>() {};
+        TypeReference<List<Disciplina>> typeReference = new TypeReference<List<Disciplina>>() {
+        };
         InputStream inputStream = ObjectMapper.class.getResourceAsStream("/json/Disciplinas.json");
-        try{
-            List<Disciplina> disciplinas =  objectMapper.readValue(inputStream, typeReference);
+        try {
+            List<Disciplina> disciplinas = objectMapper.readValue(inputStream, typeReference);
             this.disciplinaRepository.saveAll(disciplinas);
-        }catch (IOException ex){
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
 
-    public Disciplina insertNewDiscplina(DisciplinaDTO disciplinaDTO){
-        this.disciplinaRepository.save(disciplinaDTO.fromDTO());
+    public Disciplina insertNewDiscplina(DisciplinaDTO disciplinaDTO) {
+        this.disciplinaRepository.save(DisciplinaDTO.fromDTO(disciplinaDTO));
         Disciplina disciplina1 = (Disciplina) this.disciplinaRepository.findById(Long.valueOf(this.disciplinaRepository.count())).get();
         return disciplina1;
     }
 
-    public List<DisciplinaDTO> getAll(){
+    public List<DisciplinaDTO> getAll() {
         List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
-        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj)).collect(Collectors.toList());
+        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj.getId(), obj.getNome())).collect(Collectors.toList());
         return disciplinaDTOList;
     }
 
-    public List<DisciplinaDTO> getHanking(){
+    public List<DisciplinaDTO> getHankingByNotas() {
         List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
         disciplinaList.sort((o1, o2) -> o1.getNota() > o2.getNota() ? -1 : 1);
-        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj)).collect(Collectors.toList());
+        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj.getId(), obj.getNome())).collect(Collectors.toList());
+        return disciplinaDTOList;
+    }
+
+    public List<DisciplinaDTO> getHankingByLikes() {
+        List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
+        disciplinaList.sort((o1, o2) -> o1.getLikes() > o2.getLikes() ? -1 : 1);
+        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj.getId(), obj.getNome())).collect(Collectors.toList());
         return disciplinaDTOList;
     }
 
     public Disciplina getOne(Long id) throws DisciplinaNotFoundException {
         Optional<Disciplina> disciplina = this.disciplinaRepository.findById(id);
-        if(disciplina != null)
+        if (disciplina != null)
             return disciplina.get();
         throw new DisciplinaNotFoundException("Disciplina não encontrada");
     }
 
     public Disciplina updateNota(double newNota, Long id) throws DisciplinaNotFoundException {
         Disciplina disciplina = this.getOne(id);
-        disciplina.setNota(newNota);
+        if (disciplina.getNota() == 0) disciplina.setNota(newNota);
+        else disciplina.setNota((newNota + disciplina.getNota()) / 2);
         return disciplina;
     }
 
@@ -75,15 +84,22 @@ public class DisciplinaService {
         return disciplina;
     }
 
-    public Disciplina delete(Long id) throws DisciplinaNotFoundException{
+    public Disciplina delete(Long id) throws DisciplinaNotFoundException {
         Disciplina disciplina = this.getOne(id);
         this.disciplinaRepository.delete(disciplina);
         return disciplina;
     }
 
-    public Disciplina receivedLike(Long id) throws DisciplinaNotFoundException{
+    public Disciplina receivedLike(Long id) throws DisciplinaNotFoundException {
         Disciplina disciplina = this.getOne(id);
         disciplina.setLikes(disciplina.getLikes() + 1);
+        this.disciplinaRepository.save(disciplina);
+        return disciplina;
+    }
+
+    public Disciplina receivedComment(Long id, String comment) throws DisciplinaNotFoundException {
+        Disciplina disciplina = this.getOne(id);
+        disciplina.setComment(comment);
         this.disciplinaRepository.save(disciplina);
         return disciplina;
     }

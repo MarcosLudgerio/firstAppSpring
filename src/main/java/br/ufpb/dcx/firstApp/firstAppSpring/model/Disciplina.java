@@ -8,24 +8,25 @@ import javax.persistence.Id;
 public class Disciplina {
     @Id
     @GeneratedValue
-    Long id;
-    String nome;
-    Double nota;
-    String comentarios;
-    int likes;
+    private Long id;
+    private String nome;
+    private Double nota;
+    private int likes;
 
+    private String comment;
 
-    public Disciplina() {}
-
-    public Disciplina(String nome) {
-        this.nome = nome;
+    public Disciplina() {
     }
 
-    public Disciplina(String nome, Double nota, int likes) {
+    public Disciplina(String nome, Double nota) {
         this.nome = nome;
         this.nota = nota;
-        this.comentarios = comentarios;
+    }
+
+    public Disciplina(String nome, Double nota, int likes, String comment) {
+        this(nome, nota);
         this.likes = likes;
+        this.comment = comment;
     }
 
     @Override
@@ -34,21 +35,12 @@ public class Disciplina {
                 "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", nota=" + nota +
-                ", comentarios='" + comentarios + '\'' +
                 ", likes=" + likes +
                 '}';
     }
 
     public void setNota(Double nota) {
         this.nota = nota;
-    }
-
-    public String getComentarios() {
-        return comentarios;
-    }
-
-    public void setComentarios(String comentarios) {
-        this.comentarios = comentarios;
     }
 
     public int getLikes() {
@@ -59,9 +51,16 @@ public class Disciplina {
         this.likes = likes;
     }
 
-
     public Long getId() {
         return id;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public void setId(Long id) {

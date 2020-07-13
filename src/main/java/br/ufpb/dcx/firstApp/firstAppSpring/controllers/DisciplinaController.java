@@ -38,7 +38,7 @@ public class DisciplinaController {
     }
 
 
-    @PutMapping(value = "/api/disciplinas/{id}/nome")
+    @PutMapping(value = "/api/disciplinas/nome/{id}")
     public ResponseEntity<Disciplina> updateNomeDisciplina(@RequestBody String nome, @PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
         try {
             return new ResponseEntity<>(this.objDisciplinaService.updateNome(nome, id), HttpStatus.OK);
@@ -47,12 +47,13 @@ public class DisciplinaController {
         }
     }
 
-    @PutMapping(value = "/api/disciplinas/{id}/nota")
-    public ResponseEntity<Disciplina> updateNotaDisciplina(@RequestBody Double nota, @PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
+    @PutMapping(value = "/api/disciplinas/nota/{id}")
+    public ResponseEntity<DisciplinaDTO> updateNotaDisciplina(@RequestBody DisciplinaDTO disciplinaDTO, @PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
         try {
-            return new ResponseEntity<>(this.objDisciplinaService.updateNota(nota, id), HttpStatus.OK);
+            Disciplina disciplina = this.objDisciplinaService.updateNota(disciplinaDTO.getNota(), id);
+            return new ResponseEntity<>(new DisciplinaDTO(disciplina.getId(), disciplina.getNome(), disciplina.getNota()), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
-            return new ResponseEntity<>(new Disciplina(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DisciplinaDTO(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -66,6 +67,26 @@ public class DisciplinaController {
         }
     }
 
+    @PutMapping(value = "/api/disciplinas/comentarios/{id}")
+    public ResponseEntity<DisciplinaDTO> receivedComment(@RequestBody DisciplinaDTO disciplinaDTO, @PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
+        try {
+            Disciplina disciplina = this.objDisciplinaService.receivedComment(id, disciplinaDTO.getComment());
+            return new ResponseEntity<>(new DisciplinaDTO(disciplina.getId(), disciplina.getNome(), disciplina.getComment()), HttpStatus.OK);
+        }catch (DisciplinaNotFoundException ex){
+            return new ResponseEntity<>(new DisciplinaDTO(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/rancking/notas",method = RequestMethod.GET, consumes = "application/json")
+    public ResponseEntity<List<DisciplinaDTO>> ranckingByNotas(){
+        return new ResponseEntity<>(this.objDisciplinaService.getHankingByNotas(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/rancking/likes",method = RequestMethod.GET, consumes = "application/json")
+    public ResponseEntity<List<DisciplinaDTO>> ranckingByLikes(){
+        return new ResponseEntity<>(this.objDisciplinaService.getHankingByLikes(), HttpStatus.OK);
+    }
+
     @DeleteMapping(value = "/api/disciplinas/{id}")
     public ResponseEntity<Disciplina> delete(@PathVariable Long id){
         try {
@@ -73,12 +94,5 @@ public class DisciplinaController {
         }catch (DisciplinaNotFoundException ex){
             return new ResponseEntity<>(new Disciplina(), HttpStatus.NOT_FOUND);
         }
-    }
-
-
-
-    @RequestMapping(value = "/rancking",method = RequestMethod.GET, consumes = "application/json")
-    public ResponseEntity<List<DisciplinaDTO>> rancking(){
-        return new ResponseEntity<>(this.objDisciplinaService.getHanking(), HttpStatus.OK);
     }
 }
