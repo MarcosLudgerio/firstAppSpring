@@ -1,6 +1,7 @@
 package br.ufpb.dcx.firstApp.firstAppSpring.services;
 
 import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaDTO;
+import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeLikesDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.DisciplinaNotFoundException;
 import br.ufpb.dcx.firstApp.firstAppSpring.model.Disciplina;
 import br.ufpb.dcx.firstApp.firstAppSpring.repositories.DisciplinaRepository;
@@ -46,21 +47,21 @@ public class DisciplinaService {
 
     public List<DisciplinaDTO> getAll() {
         List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
-        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj.getId(), obj.getNome())).collect(Collectors.toList());
+        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj)).collect(Collectors.toList());
         return disciplinaDTOList;
     }
 
     public List<DisciplinaDTO> getHankingByNotas() {
         List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
         disciplinaList.sort((o1, o2) -> o1.getNota() > o2.getNota() ? -1 : 1);
-        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj.getId(), obj.getNome())).collect(Collectors.toList());
+        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj)).collect(Collectors.toList());
         return disciplinaDTOList;
     }
 
-    public List<DisciplinaDTO> getHankingByLikes() {
+    public List<DisciplinaIdNomeLikesDTO> getHankingByLikes() {
         List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
         disciplinaList.sort((o1, o2) -> o1.getLikes() > o2.getLikes() ? -1 : 1);
-        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj.getId(), obj.getNome())).collect(Collectors.toList());
+        List<DisciplinaIdNomeLikesDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaIdNomeLikesDTO(obj)).collect(Collectors.toList());
         return disciplinaDTOList;
     }
 
