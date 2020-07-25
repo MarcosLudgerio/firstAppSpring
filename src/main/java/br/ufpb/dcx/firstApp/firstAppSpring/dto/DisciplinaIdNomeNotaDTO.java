@@ -4,22 +4,21 @@ import br.ufpb.dcx.firstApp.firstAppSpring.model.Disciplina;
 
 import java.io.Serializable;
 
-
-public class DisciplinaDTO implements Serializable {
+public class DisciplinaIdNomeNotaDTO implements Serializable {
     private Long id;
     private String nome;
     private Double nota;
 
-    public DisciplinaDTO() {}
+    public DisciplinaIdNomeNotaDTO() {}
 
-    public DisciplinaDTO(Disciplina disciplina) {
+    public DisciplinaIdNomeNotaDTO(Disciplina disciplina) {
         this.id = disciplina.getId();
         this.nome = disciplina.getNome();
         this.nota = disciplina.getNota();
     }
 
-    public static Disciplina fromDTO(DisciplinaDTO disciplinaDTO){
-        return new Disciplina(disciplinaDTO.getNome(), disciplinaDTO.getNota());
+    public static Disciplina fromDTO(DisciplinaIdNomeNotaDTO disciplinaIdNomeNotaDTO){
+        return new Disciplina(disciplinaIdNomeNotaDTO.getNome(), disciplinaIdNomeNotaDTO.getNota());
     }
 
     public Double getNota() {
@@ -44,5 +43,15 @@ public class DisciplinaDTO implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+
+    @Override
+    public String toString() {
+        return "DisciplinaIdNomeNotaDTO{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", nota=" + nota +
+                '}';
     }
 }

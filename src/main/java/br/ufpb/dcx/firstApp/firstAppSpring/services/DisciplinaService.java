@@ -1,6 +1,6 @@
 package br.ufpb.dcx.firstApp.firstAppSpring.services;
 
-import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaDTO;
+import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeLikesDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.DisciplinaNotFoundException;
 import br.ufpb.dcx.firstApp.firstAppSpring.model.Disciplina;
@@ -39,30 +39,29 @@ public class DisciplinaService {
     }
 
 
-    public Disciplina insertNewDiscplina(DisciplinaDTO disciplinaDTO) {
-        this.disciplinaRepository.save(DisciplinaDTO.fromDTO(disciplinaDTO));
+    public Disciplina insertNewDiscplina(Disciplina disciplina) {
+        this.disciplinaRepository.save(disciplina);
         Disciplina disciplina1 = (Disciplina) this.disciplinaRepository.findById(Long.valueOf(this.disciplinaRepository.count())).get();
         return disciplina1;
     }
 
-    public List<DisciplinaDTO> getAll() {
+    public List<Disciplina> getAll() {
         List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
-        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj)).collect(Collectors.toList());
-        return disciplinaDTOList;
+        List<DisciplinaIdNomeDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaIdNomeDTO(obj)).collect(Collectors.toList());
+        return disciplinaList;
     }
 
-    public List<DisciplinaDTO> getHankingByNotas() {
+    public List<Disciplina> getRankingByNotas() {
         List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
         disciplinaList.sort((o1, o2) -> o1.getNota() > o2.getNota() ? -1 : 1);
-        List<DisciplinaDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaDTO(obj)).collect(Collectors.toList());
-        return disciplinaDTOList;
+        return disciplinaList;
     }
 
-    public List<DisciplinaIdNomeLikesDTO> getHankingByLikes() {
+    public List<Disciplina> getRankingByLikes() {
         List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
         disciplinaList.sort((o1, o2) -> o1.getLikes() > o2.getLikes() ? -1 : 1);
         List<DisciplinaIdNomeLikesDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaIdNomeLikesDTO(obj)).collect(Collectors.toList());
-        return disciplinaDTOList;
+        return disciplinaList;
     }
 
     public Disciplina getOne(Long id) throws DisciplinaNotFoundException {

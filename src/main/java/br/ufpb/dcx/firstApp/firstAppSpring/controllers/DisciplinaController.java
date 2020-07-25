@@ -1,7 +1,8 @@
 package br.ufpb.dcx.firstApp.firstAppSpring.controllers;
 
-import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaDTO;
+import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeNotaDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeCommentsDTO;
+import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeLikesDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.DisciplinaNotFoundException;
 import br.ufpb.dcx.firstApp.firstAppSpring.model.Disciplina;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class DisciplinaController {
@@ -21,14 +23,13 @@ public class DisciplinaController {
     DisciplinaService objDisciplinaService;
 
     @PostMapping(value = "/api/disciplinas")
-    public ResponseEntity<Disciplina> insert(@RequestBody DisciplinaDTO disciplinaDTO){
-        return new ResponseEntity<>(objDisciplinaService.insertNewDiscplina(disciplinaDTO), HttpStatus.OK);
+    public ResponseEntity<Disciplina> insert(@RequestBody DisciplinaIdNomeNotaDTO disciplinaIdNomeNotaDTO){
+        return new ResponseEntity<>(objDisciplinaService.insertNewDiscplina(DisciplinaIdNomeNotaDTO.fromDTO(disciplinaIdNomeNotaDTO)), HttpStatus.OK);
     }
 
-
     @GetMapping(value = "/api/disciplinas")
-    public ResponseEntity<List<DisciplinaDTO>> findAll(){
-        return new ResponseEntity<>(objDisciplinaService.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<DisciplinaIdNomeDTO>> findAll(){
+        return new ResponseEntity<>(objDisciplinaService.getAll().stream().map(obj -> new DisciplinaIdNomeDTO(obj)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @GetMapping(value = "/api/disciplinas/{id}")
@@ -40,9 +41,8 @@ public class DisciplinaController {
         }
     }
 
-
     @PutMapping(value = "/api/disciplinas/nome/{id}")
-    public ResponseEntity<Disciplina> updateNomeDisciplina(@RequestBody String nome, @PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
+    public ResponseEntity<Disciplina> updateNomeDisciplina(@RequestBody String nome, @PathVariable Long id){
         try {
             return new ResponseEntity<>(this.objDisciplinaService.updateNome(nome, id), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
@@ -51,27 +51,31 @@ public class DisciplinaController {
     }
 
     @PutMapping(value = "/api/disciplinas/nota/{id}")
-    public ResponseEntity<DisciplinaDTO> updateNotaDisciplina(@RequestBody DisciplinaDTO disciplinaDTO, @PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
+    public ResponseEntity<DisciplinaIdNomeNotaDTO> updateNotaDisciplina(@RequestBody DisciplinaIdNomeNotaDTO disciplinaIdNomeNotaDTO, @PathVariable Long id){
         try {
-            Disciplina disciplina = this.objDisciplinaService.updateNota(disciplinaDTO.getNota(), id);
-            return new ResponseEntity<>(new DisciplinaDTO(disciplina), HttpStatus.OK);
+            Disciplina disciplina = this.objDisciplinaService.updateNota(disciplinaIdNomeNotaDTO.getNota(), id);
+            return new ResponseEntity<>(new DisciplinaIdNomeNotaDTO(disciplina), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
-            return new ResponseEntity<>(new DisciplinaDTO(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new DisciplinaIdNomeNotaDTO(), HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping(value = "/api/disciplinas/likes/{id}")
-    public ResponseEntity<DisciplinaIdNomeLikesDTO> receivedLike(@PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
+    public ResponseEntity<DisciplinaIdNomeLikesDTO> receivedLike(@PathVariable Long id){
         try {
             Disciplina disciplina = this.objDisciplinaService.receivedLike(id);
-            return new ResponseEntity<>(new DisciplinaIdNomeLikesDTO(disciplina), HttpStatus.OK);
+            DisciplinaIdNomeLikesDTO obj = new DisciplinaIdNomeLikesDTO(disciplina);
+            System.out.println("==================");
+            System.out.println(obj);
+            System.out.println("==================");
+            return new ResponseEntity<>(obj, HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
             return new ResponseEntity<>(new DisciplinaIdNomeLikesDTO(), HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping(value = "/api/disciplinas/comentarios/{id}")
-    public ResponseEntity<DisciplinaIdNomeCommentsDTO> receivedComment(@RequestBody DisciplinaIdNomeCommentsDTO disciplinaDTO, @PathVariable Long id){ // LEMBRE QUE DESSA FORMA PODE NÃO DAR CERTO POR CONTA DESTAS LINHAS
+    public ResponseEntity<DisciplinaIdNomeCommentsDTO> receivedComment(@RequestBody DisciplinaIdNomeCommentsDTO disciplinaDTO, @PathVariable Long id){
         try {
             Disciplina disciplina = this.objDisciplinaService.receivedComment(id, disciplinaDTO.getComments());
             return new ResponseEntity<>(new DisciplinaIdNomeCommentsDTO(disciplina), HttpStatus.OK);
@@ -80,14 +84,16 @@ public class DisciplinaController {
         }
     }
 
-    @RequestMapping(value = "/rancking/notas",method = RequestMethod.GET, consumes = "application/json")
-    public ResponseEntity<List<DisciplinaDTO>> ranckingByNotas(){
-        return new ResponseEntity<>(this.objDisciplinaService.getHankingByNotas(), HttpStatus.OK);
+    @RequestMapping(value = "/rancking/likes",method = RequestMethod.GET, consumes = "application/json")
+    public ResponseEntity<List<?>> ranckingByLikes(){
+        List<Disciplina> disciplinas = this.objDisciplinaService.getRankingByLikes();
+        return new ResponseEntity<>(disciplinas.stream().map(obj -> new DisciplinaIdNomeLikesDTO(obj)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/rancking/likes",method = RequestMethod.GET, consumes = "application/json")
-    public ResponseEntity<List<DisciplinaIdNomeLikesDTO>> ranckingByLikes(){
-        return new ResponseEntity<>(this.objDisciplinaService.getHankingByLikes(), HttpStatus.OK);
+    @RequestMapping(value = "/rancking/notas",method = RequestMethod.GET, consumes = "application/json")
+    public ResponseEntity<List<?>> ranckingByNotas(){
+        List<Disciplina> disciplinas = this.objDisciplinaService.getRankingByNotas();
+        return new ResponseEntity<>(disciplinas.stream().map(obj -> new DisciplinaIdNomeNotaDTO(obj)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/api/disciplinas/{id}")
