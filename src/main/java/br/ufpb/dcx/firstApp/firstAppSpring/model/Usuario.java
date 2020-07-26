@@ -1,16 +1,15 @@
 package br.ufpb.dcx.firstApp.firstAppSpring.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class Usuario {
-    @Id @GeneratedValue
-    private Long id;
+    @Id
+    private String email;
     private String nome;
     private String senha;
-    private String email;
+
 
     public Usuario() {
     }
@@ -24,19 +23,10 @@ public class Usuario {
     @Override
     public String toString() {
         return "Usuario{" +
-                "id=" + id +
                 ", nome='" + nome + '\'' +
                 ", senha='" + senha + '\'' +
                 ", email='" + email + '\'' +
                 '}';
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNome() {
