@@ -6,8 +6,7 @@ import javax.persistence.Id;
 
 @Entity
 public class Disciplina {
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
     private Long id;
     private String nome;
     private Double nota;

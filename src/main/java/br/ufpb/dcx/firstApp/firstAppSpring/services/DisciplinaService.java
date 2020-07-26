@@ -1,6 +1,6 @@
 package br.ufpb.dcx.firstApp.firstAppSpring.services;
 
-import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeDTO;
+
 import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeLikesDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.DisciplinaNotFoundException;
 import br.ufpb.dcx.firstApp.firstAppSpring.model.Disciplina;
@@ -47,7 +47,6 @@ public class DisciplinaService {
 
     public List<Disciplina> getAll() {
         List<Disciplina> disciplinaList = this.disciplinaRepository.findAll();
-        List<DisciplinaIdNomeDTO> disciplinaDTOList = disciplinaList.stream().map(obj -> new DisciplinaIdNomeDTO(obj)).collect(Collectors.toList());
         return disciplinaList;
     }
 
@@ -99,7 +98,7 @@ public class DisciplinaService {
 
     public Disciplina receivedComment(Long id, String comment) throws DisciplinaNotFoundException {
         Disciplina disciplina = this.getOne(id);
-        disciplina.setComment(comment);
+        disciplina.setComment(disciplina.getComment() + "\n" + comment);
         this.disciplinaRepository.save(disciplina);
         return disciplina;
     }

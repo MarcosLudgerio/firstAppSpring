@@ -53,8 +53,7 @@ public class DisciplinaController {
     @PutMapping(value = "/api/disciplinas/nota/{id}")
     public ResponseEntity<DisciplinaIdNomeNotaDTO> updateNotaDisciplina(@RequestBody DisciplinaIdNomeNotaDTO disciplinaIdNomeNotaDTO, @PathVariable Long id){
         try {
-            Disciplina disciplina = this.objDisciplinaService.updateNota(disciplinaIdNomeNotaDTO.getNota(), id);
-            return new ResponseEntity<>(new DisciplinaIdNomeNotaDTO(disciplina), HttpStatus.OK);
+            return new ResponseEntity<>(new DisciplinaIdNomeNotaDTO(this.objDisciplinaService.updateNota(disciplinaIdNomeNotaDTO.getNota(), id)), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
             return new ResponseEntity<>(new DisciplinaIdNomeNotaDTO(), HttpStatus.NOT_FOUND);
         }
@@ -63,12 +62,7 @@ public class DisciplinaController {
     @PutMapping(value = "/api/disciplinas/likes/{id}")
     public ResponseEntity<DisciplinaIdNomeLikesDTO> receivedLike(@PathVariable Long id){
         try {
-            Disciplina disciplina = this.objDisciplinaService.receivedLike(id);
-            DisciplinaIdNomeLikesDTO obj = new DisciplinaIdNomeLikesDTO(disciplina);
-            System.out.println("==================");
-            System.out.println(obj);
-            System.out.println("==================");
-            return new ResponseEntity<>(obj, HttpStatus.OK);
+            return new ResponseEntity<>(new DisciplinaIdNomeLikesDTO(this.objDisciplinaService.receivedLike(id)), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
             return new ResponseEntity<>(new DisciplinaIdNomeLikesDTO(), HttpStatus.NOT_FOUND);
         }
@@ -77,8 +71,7 @@ public class DisciplinaController {
     @PutMapping(value = "/api/disciplinas/comentarios/{id}")
     public ResponseEntity<DisciplinaIdNomeCommentsDTO> receivedComment(@RequestBody DisciplinaIdNomeCommentsDTO disciplinaDTO, @PathVariable Long id){
         try {
-            Disciplina disciplina = this.objDisciplinaService.receivedComment(id, disciplinaDTO.getComments());
-            return new ResponseEntity<>(new DisciplinaIdNomeCommentsDTO(disciplina), HttpStatus.OK);
+            return new ResponseEntity<>(new DisciplinaIdNomeCommentsDTO(this.objDisciplinaService.receivedComment(id, disciplinaDTO.getComments())), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
             return new ResponseEntity<>(new DisciplinaIdNomeCommentsDTO(), HttpStatus.NOT_FOUND);
         }
@@ -86,14 +79,12 @@ public class DisciplinaController {
 
     @RequestMapping(value = "/rancking/likes",method = RequestMethod.GET, consumes = "application/json")
     public ResponseEntity<List<?>> ranckingByLikes(){
-        List<Disciplina> disciplinas = this.objDisciplinaService.getRankingByLikes();
-        return new ResponseEntity<>(disciplinas.stream().map(obj -> new DisciplinaIdNomeLikesDTO(obj)).collect(Collectors.toList()), HttpStatus.OK);
+        return new ResponseEntity<>(this.objDisciplinaService.getRankingByLikes().stream().map(obj -> new DisciplinaIdNomeLikesDTO(obj)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/rancking/notas",method = RequestMethod.GET, consumes = "application/json")
     public ResponseEntity<List<?>> ranckingByNotas(){
-        List<Disciplina> disciplinas = this.objDisciplinaService.getRankingByNotas();
-        return new ResponseEntity<>(disciplinas.stream().map(obj -> new DisciplinaIdNomeNotaDTO(obj)).collect(Collectors.toList()), HttpStatus.OK);
+        return new ResponseEntity<>(this.objDisciplinaService.getRankingByNotas().stream().map(obj -> new DisciplinaIdNomeNotaDTO(obj)).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/api/disciplinas/{id}")
