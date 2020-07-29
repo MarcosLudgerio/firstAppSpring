@@ -34,7 +34,7 @@ public class JWTService {
 
     public static final String NADA_IMPORTANT = "issonaoimporta";
 
-    public Optional<String> getUsuario(String headerAuthorization) {
+    public Optional<String> getEmailUsuarioLogado(String headerAuthorization) {
         if (headerAuthorization == null || !headerAuthorization.startsWith("Bearer ")) throw new SecurityException();
         String token = headerAuthorization.substring(TokenFilter.TOKEN_INDEX);
         String subject = "";

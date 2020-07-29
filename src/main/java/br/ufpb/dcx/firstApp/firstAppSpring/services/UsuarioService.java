@@ -7,6 +7,8 @@ import br.ufpb.dcx.firstApp.firstAppSpring.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,22 +16,34 @@ import java.util.Optional;
 public class UsuarioService {
 
     @Autowired
-    UsuarioRepository usarioRepository;
+    UsuarioRepository usuarioRepository;
 
     @Autowired
     JWTService jwtService;
 
+    @PostConstruct
+    private void initUsuarios() {
+            List<Usuario> usuarios = new ArrayList<>();
+            Usuario u1 = new Usuario("usuario1", "usuario1", "usuario1");
+            Usuario u2 = new Usuario("usuario2", "usuario2", "usuario2");
+            Usuario u3 = new Usuario("usuario3", "usuario3", "usuario3");
+            usuarios.add(u1);
+            usuarios.add(u2);
+            usuarios.add(u3);
+            this.usuarioRepository.saveAll(usuarios);
+    }
+
     public Usuario insertNewUsuario(Usuario usuario){
-        this.usarioRepository.save(usuario);
+        this.usuarioRepository.save(usuario);
         return usuario;
     }
 
     public List<Usuario> getAll(){
-        return this.usarioRepository.findAll();
+        return this.usuarioRepository.findAll();
     }
 
     public Usuario getOne(String email) throws UsuarioNotFoundException {
-        Optional<Usuario> usuario = this.usarioRepository.findByEmail(email);
+        Optional<Usuario> usuario = this.usuarioRepository.findByEmail(email);
         return usuario.orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado"));
     }
 
@@ -42,16 +56,16 @@ public class UsuarioService {
     }
 
     public UsuarioDTO deleteUsuario(String headerAuthotization) throws UsuarioNotFoundException{
-        Optional<String> usuarioId = jwtService.getUsuario(headerAuthotization);
-        Usuario usuario = this.validateUsuariio(usuarioId);
-        this.usarioRepository.delete(usuario);
+        Optional<String> usuarioId = jwtService.getEmailUsuarioLogado(headerAuthotization);
+        Usuario usuario = this.validateUsuario(usuarioId);
+        this.usuarioRepository.delete(usuario);
         return new UsuarioDTO(usuario);
     }
 
-    private Usuario validateUsuariio(Optional<String> id) throws UsuarioNotFoundException{
+    private Usuario validateUsuario(Optional<String> id) throws UsuarioNotFoundException{
         if(!id.isPresent())
             throw new UsuarioNotFoundException("Usuário não encontrado");
-        Optional<Usuario> usuario = this.usarioRepository.findByEmail(id.get());
+        Optional<Usuario> usuario = this.usuarioRepository.findByEmail(id.get());
         if(!usuario.isPresent())
             throw new UsuarioNotFoundException("E-mail não encontrado!");
         return usuario.get();

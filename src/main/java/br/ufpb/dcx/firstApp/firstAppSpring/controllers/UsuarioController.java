@@ -31,12 +31,12 @@ public class UsuarioController {
     }
 
     @GetMapping(value = "/usuarios/{id}")
-    public ResponseEntity<Usuario> findUsuario(@PathVariable Long id) throws UsuarioNotFoundException {
+    public ResponseEntity<Usuario> findUsuario(@PathVariable String id) throws UsuarioNotFoundException {
         return new ResponseEntity<>(this.usuarioService.getOne(id), HttpStatus.OK);
     }
 
     @PutMapping(value = "/usuarios/{id}")
-    public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuario) throws UsuarioNotFoundException{
+    public ResponseEntity<Usuario> updateUsuario(@PathVariable String id, @RequestBody Usuario usuario) throws UsuarioNotFoundException{
         return new ResponseEntity<>(this.usuarioService.updateUsuario(id, usuario), HttpStatus.OK);
     }
 

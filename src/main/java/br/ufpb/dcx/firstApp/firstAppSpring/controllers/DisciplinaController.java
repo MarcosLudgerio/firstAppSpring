@@ -5,8 +5,10 @@ import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeCommentsDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeLikesDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.DisciplinaNotFoundException;
+import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.UsuarioNotFoundException;
 import br.ufpb.dcx.firstApp.firstAppSpring.model.Disciplina;
 import br.ufpb.dcx.firstApp.firstAppSpring.services.DisciplinaService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,27 +53,27 @@ public class DisciplinaController {
     }
 
     @PutMapping(value = "/api/disciplinas/nota/{id}")
-    public ResponseEntity<DisciplinaIdNomeNotaDTO> updateNotaDisciplina(@RequestBody DisciplinaIdNomeNotaDTO disciplinaIdNomeNotaDTO, @PathVariable Long id){
+    public ResponseEntity<DisciplinaIdNomeNotaDTO> updateNotaDisciplina(@RequestBody DisciplinaIdNomeNotaDTO disciplinaIdNomeNotaDTO, @PathVariable Long id, @RequestHeader("Authorization")  String token) throws UsuarioNotFoundException{
         try {
-            return new ResponseEntity<>(new DisciplinaIdNomeNotaDTO(this.objDisciplinaService.updateNota(disciplinaIdNomeNotaDTO.getNota(), id)), HttpStatus.OK);
+            return new ResponseEntity<>(new DisciplinaIdNomeNotaDTO(this.objDisciplinaService.updateNota(disciplinaIdNomeNotaDTO.getNota(), id, token)), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
             return new ResponseEntity<>(new DisciplinaIdNomeNotaDTO(), HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping(value = "/api/disciplinas/likes/{id}")
-    public ResponseEntity<DisciplinaIdNomeLikesDTO> receivedLike(@PathVariable Long id){
+    public ResponseEntity<DisciplinaIdNomeLikesDTO> receivedLike(@PathVariable Long id, @RequestHeader("Authorization")  String token) throws UsuarioNotFoundException {
         try {
-            return new ResponseEntity<>(new DisciplinaIdNomeLikesDTO(this.objDisciplinaService.receivedLike(id)), HttpStatus.OK);
+            return new ResponseEntity<>(new DisciplinaIdNomeLikesDTO(this.objDisciplinaService.receivedLike(id, token)), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
             return new ResponseEntity<>(new DisciplinaIdNomeLikesDTO(), HttpStatus.NOT_FOUND);
         }
     }
 
     @PutMapping(value = "/api/disciplinas/comentarios/{id}")
-    public ResponseEntity<DisciplinaIdNomeCommentsDTO> receivedComment(@RequestBody DisciplinaIdNomeCommentsDTO disciplinaDTO, @PathVariable Long id){
+    public ResponseEntity<DisciplinaIdNomeCommentsDTO> receivedComment(@RequestBody DisciplinaIdNomeCommentsDTO disciplinaDTO, @PathVariable Long id, @RequestHeader("Authorization")  String token) throws UsuarioNotFoundException{
         try {
-            return new ResponseEntity<>(new DisciplinaIdNomeCommentsDTO(this.objDisciplinaService.receivedComment(id, disciplinaDTO.getComments())), HttpStatus.OK);
+            return new ResponseEntity<>(new DisciplinaIdNomeCommentsDTO(this.objDisciplinaService.receivedComment(id, disciplinaDTO.getComments(), token)), HttpStatus.OK);
         }catch (DisciplinaNotFoundException ex){
             return new ResponseEntity<>(new DisciplinaIdNomeCommentsDTO(), HttpStatus.NOT_FOUND);
         }
