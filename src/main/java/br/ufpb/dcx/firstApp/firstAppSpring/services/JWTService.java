@@ -28,7 +28,7 @@ public class JWTService {
     }
 
     private String generateToken(UsuarioDTO usuarioDTO) {
-        String token = Jwts.builder().setSubject(usuarioDTO.getEmail()).signWith(SignatureAlgorithm.HS512, NADA_IMPORTANT).setExpiration(new Date(System.currentTimeMillis() + 1 * 60 * 1000)).compact();
+        String token = Jwts.builder().setSubject(usuarioDTO.getEmail()).signWith(SignatureAlgorithm.HS512, NADA_IMPORTANT).setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)).compact();
         return token;
     }
 

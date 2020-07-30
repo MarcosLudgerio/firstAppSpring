@@ -47,11 +47,13 @@ public class UsuarioService {
         return usuario.orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado"));
     }
 
-    public Usuario updateUsuario(String email, Usuario usuario) throws UsuarioNotFoundException{
+    public Usuario updateEmailUsuario(String email, String token) throws UsuarioNotFoundException{
+        Optional<String> emailUsuarioLogado = jwtService.getEmailUsuarioLogado(token);
+        if(!emailUsuarioLogado.isPresent()) throw new UsuarioNotFoundException("Ocorreu um erro na autenticação, por favor verifique os campos e tente novamente");
         Usuario usuario1 = this.getOne(email);
-        usuario1.setEmail(usuario.getEmail());
-        usuario1.setNome(usuario.getNome());
-        usuario1.setSenha(usuario.getSenha());
+        usuario1.setEmail(usuario1.getEmail());
+        usuario1.setNome(usuario1.getNome());
+        usuario1.setSenha(usuario1.getSenha());
         return this.insertNewUsuario(usuario1);
     }
 

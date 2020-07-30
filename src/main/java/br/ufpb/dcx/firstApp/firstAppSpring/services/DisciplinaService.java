@@ -1,10 +1,8 @@
 package br.ufpb.dcx.firstApp.firstAppSpring.services;
 
-import br.ufpb.dcx.firstApp.firstAppSpring.dto.DisciplinaIdNomeLikesDTO;
 import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.DisciplinaNotFoundException;
 import br.ufpb.dcx.firstApp.firstAppSpring.exceptions.UsuarioNotFoundException;
 import br.ufpb.dcx.firstApp.firstAppSpring.model.Disciplina;
-import br.ufpb.dcx.firstApp.firstAppSpring.model.Usuario;
 import br.ufpb.dcx.firstApp.firstAppSpring.repositories.DisciplinaRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -16,9 +14,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class DisciplinaService {
@@ -45,7 +43,6 @@ public class DisciplinaService {
             System.out.println(ex.getMessage());
         }
     }
-
 
     public Disciplina insertNewDiscplina(Disciplina disciplina) {
         this.disciplinaRepository.save(disciplina);
@@ -104,6 +101,7 @@ public class DisciplinaService {
         if(!emailUsuarioLogado.isPresent()) throw new UsuarioNotFoundException("Ocorreu um erro na autenticação, por favor verifique os campos e tente novamente");
 
         Disciplina disciplina = this.getOne(id);
+
         disciplina.setLikes(disciplina.getLikes() + 1);
         this.disciplinaRepository.save(disciplina);
 
