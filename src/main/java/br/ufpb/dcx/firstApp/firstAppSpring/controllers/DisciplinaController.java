@@ -79,7 +79,7 @@ public class DisciplinaController {
         }
     }
 
-    @RequestMapping(value = "/rancking/likes",method = RequestMethod.GET, consumes = "application/json")
+    @RequestMapping(value = "/ranking/likes",method = RequestMethod.GET, consumes = "application/json")
     public ResponseEntity<List<?>> ranckingByLikes(){
         return new ResponseEntity<>(this.objDisciplinaService.getRankingByLikes().stream().map(obj -> new DisciplinaIdNomeLikesDTO(obj)).collect(Collectors.toList()), HttpStatus.OK);
     }

@@ -73,4 +73,12 @@ public class UsuarioService {
         return usuario.get();
     }
 
+    public Object updateUsuario(String id, Usuario usuario) throws UsuarioNotFoundException {
+        Optional<Usuario> usuario1 = usuarioRepository.findById(id);
+        if(!usuario1.isPresent()) throw new UsuarioNotFoundException("Usuário não encontrado");
+        usuario1.get().setEmail(usuario.getEmail());
+        usuario1.get().setNome(usuario.getNome());
+        usuario1.get().setSenha(usuario.getSenha());
+        return usuarioRepository.save(usuario1);
+    }
 }
